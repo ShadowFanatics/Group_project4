@@ -1,10 +1,8 @@
-package com.example.camera;
+package com.example.camera_17;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import android.app.ActionBar.LayoutParams;
+import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -18,8 +16,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.MediaColumns;
+import android.provider.MediaStore.Images.Media;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -31,7 +29,7 @@ import android.widget.ImageView;
 
 
 public class MainActivity extends Activity {
-	//å®£å‘Š
+	//«Å§i
 	private ImageView photo;
 	private DisplayMetrics mPhone;
 	private Button button_shot;
@@ -47,7 +45,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	                
-		//è®€å–æ‰‹æ©Ÿè§£æžåº¦
+		//Åª¨ú¤â¾÷¸ÑªR«×
 		mPhone = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(mPhone);
 	      
@@ -70,8 +68,8 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) 
 		{
-			//é–‹å•Ÿç›¸æ©ŸåŠŸèƒ½ï¼Œä¸¦å°‡æ‹ç…§å¾Œçš„åœ–ç‰‡å­˜å…¥SDå¡ç›¸ç‰‡é›†å…§ï¼Œé ˆç”±startActivityForResultä¸”
-			//å¸¶å…¥ requestCodeé€²è¡Œå‘¼å«ï¼ŒåŽŸå› ç‚ºæ‹ç…§å®Œç•¢å¾Œè¿”å›žç¨‹å¼å¾Œå‰‡å‘¼å«onActivityResult
+			//¶}±Ò¬Û¾÷¥\¯à¡A¨Ã±N©ç·Ó«áªº¹Ï¤ù¦s¤JSD¥d¬Û¤ù¶°¤º¡A¶·¥ÑstartActivityForResult¥B
+			//±a¤J requestCode¶i¦æ©I¥s¡A­ì¦]¬°©ç·Ó§¹²¦«áªð¦^µ{¦¡«á«h©I¥sonActivityResult
 			ContentValues value = new ContentValues();
 			value.put(MediaColumns.MIME_TYPE, "image/jpeg");                                      
 			Uri uri= getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
@@ -79,14 +77,14 @@ public class MainActivity extends Activity {
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
 			startActivityForResult(intent, CAMERA);      
-	       }
+	    }
 	};
 	private OnClickListener btnView = new OnClickListener(){
 		@Override
 		public void onClick(View v) 
 		{
-			//é–‹å•Ÿç›¸ç°¿ç›¸ç‰‡é›†ï¼Œé ˆç”±startActivityForResultä¸”å¸¶å…¥requestCodeé€²è¡Œå‘¼å«ï¼ŒåŽŸå› 
-			//ç‚ºé»žé¸ç›¸ç‰‡å¾Œè¿”å›žç¨‹å¼å‘¼å«onActivityResult
+			//¶}±Ò¬ÛÃ¯¬Û¤ù¶°¡A¶·¥ÑstartActivityForResult¥B±a¤JrequestCode¶i¦æ©I¥s¡A­ì¦]
+			//¬°ÂI¿ï¬Û¤ù«áªð¦^µ{¦¡©I¥sonActivityResult
 			Intent intent = new Intent();
 			intent.setType("image/*");
 			intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -101,30 +99,30 @@ public class MainActivity extends Activity {
 		}
 	};
 	        
-	//æ‹ç…§å®Œç•¢æˆ–é¸å–åœ–ç‰‡å¾Œå‘¼å«æ­¤å‡½å¼
+	//©ç·Ó§¹²¦©Î¿ï¨ú¹Ï¤ù«á©I¥s¦¹¨ç¦¡
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
-		//è—‰ç”±requestCodeåˆ¤æ–·æ˜¯å¦ç‚ºé–‹å•Ÿç›¸æ©Ÿæˆ–é–‹å•Ÿç›¸ç°¿è€Œå‘¼å«çš„ï¼Œä¸”dataä¸ç‚ºnull
+		//ÂÇ¥ÑrequestCode§PÂ_¬O§_¬°¶}±Ò¬Û¾÷©Î¶}±Ò¬ÛÃ¯¦Ó©I¥sªº¡A¥Bdata¤£¬°null
 		if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null)
 		{
-			//å–å¾—ç…§ç‰‡è·¯å¾‘uri
+			//¨ú±o·Ó¤ù¸ô®|uri
 			Uri uri = data.getData();
 			ContentResolver cr = this.getContentResolver();	         
 			String path = getImagePath(uri);
 	                    
 			try{
-				//è®€å–ç…§ç‰‡ï¼Œåž‹æ…‹ç‚ºBitmap
+				//Åª¨ú·Ó¤ù¡A«¬ºA¬°Bitmap
 				Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
 		         
-				//åˆ¤æ–·ç…§ç‰‡ç‚ºæ©«å‘æˆ–è€…ç‚ºç›´å‘ï¼Œä¸¦é€²å…¥ScalePicåˆ¤æ–·åœ–ç‰‡æ˜¯å¦è¦é€²è¡Œç¸®æ”¾
+				//§PÂ_·Ó¤ù¬°¾î¦V©ÎªÌ¬°ª½¦V¡A¨Ã¶i¤JScalePic§PÂ_¹Ï¤ù¬O§_­n¶i¦æÁY©ñ
 				if(bitmap.getWidth()>bitmap.getHeight()){
 					ScalePic(bitmap,mPhone.heightPixels, readImageDegree(path));
-		        	Log.i("tag","æ—‹è½‰"+Integer.toString(readImageDegree(path)));
+		        	Log.i("tag","±ÛÂà"+Integer.toString(readImageDegree(path)));
 		        }
 		        else{ 
 		        	ScalePic(bitmap,mPhone.widthPixels,readImageDegree(path));
-		        	Log.i("tag","æ—‹è½‰"+Integer.toString(readImageDegree(path))+path);
+		        	Log.i("tag","±ÛÂà"+Integer.toString(readImageDegree(path))+path);
 		        }
 		        //rotateBitmap(readImageDegree(uri.toString()),bitmap);
 		        //photo.setImageBitmap(bitmap);
@@ -183,7 +181,7 @@ public class MainActivity extends Activity {
 				break;
 			}
 		} catch (IOException ex) {
-			Log.d("è®€å–éŒ¯èª¤", "----" + ex.getMessage());
+			Log.d("Åª¨ú¿ù»~", "----" + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return degree;
@@ -192,17 +190,17 @@ public class MainActivity extends Activity {
 	{
 		Matrix mMat = new Matrix() ;
 		   	   
-		//ç¸®æ”¾æ¯”ä¾‹é è¨­ç‚º1
+		//ÁY©ñ¤ñ¨Ò¹w³]¬°1
 		float mScale = 1 ;
 	                
-		//å¦‚æžœåœ–ç‰‡å¯¬åº¦å¤§æ–¼æ‰‹æ©Ÿå¯¬åº¦å‰‡é€²è¡Œç¸®æ”¾ï¼Œå¦å‰‡ç›´æŽ¥å°‡åœ–ç‰‡æ”¾å…¥ImageViewå…§
+		//¦pªG¹Ï¤ù¼e«×¤j©ó¤â¾÷¼e«×«h¶i¦æÁY©ñ¡A§_«hª½±µ±N¹Ï¤ù©ñ¤JImageView¤º
 		if(bitmap.getWidth() > phone )
 		{	    	  
-			//åˆ¤æ–·ç¸®æ”¾æ¯”ä¾‹
+			//§PÂ_ÁY©ñ¤ñ¨Ò
 			mScale = (float)phone/(float)bitmap.getWidth();	                      
 			  
 			mMat.setScale(mScale, mScale);
-			//è½‰æ­£
+			//Âà¥¿
 			mMat.postRotate(angle);
 			Bitmap mScaleBitmap = Bitmap.createBitmap(bitmap,
 	                                                   0,
