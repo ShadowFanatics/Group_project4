@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import android.app.ActionBar.LayoutParams;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -28,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -40,6 +44,7 @@ public class MainActivity extends Activity {
 	   
 	private final static int CAMERA = 66 ;
 	private final static int PHOTO = 99 ;
+	private final static String tag = "camera" ;
 	        
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -75,11 +80,13 @@ public class MainActivity extends Activity {
 			ContentValues value = new ContentValues();
 			value.put(MediaColumns.MIME_TYPE, "image/jpeg");                                      
 			Uri uri= getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
-		                                              value); 
+		                                              value);
+			Toast.makeText(v.getContext(), uri.toString(), Toast.LENGTH_LONG).show();;
+			
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
 			startActivityForResult(intent, CAMERA);      
-	       }
+	     }
 	};
 	private OnClickListener btnView = new OnClickListener(){
 		@Override
@@ -105,8 +112,9 @@ public class MainActivity extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		//藉由requestCode判斷是否為開啟相機或開啟相簿而呼叫的，且data不為null
-		if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null)
+		if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null && data.getData() != null)
 		{
 			//取得照片路徑uri
 			Uri uri = data.getData();
@@ -130,9 +138,10 @@ public class MainActivity extends Activity {
 		        //photo.setImageBitmap(bitmap);
 			} 
 			catch (FileNotFoundException e){
+				Log.w(tag, "OnActivityError");
 			}
 		}	                
-		super.onActivityResult(requestCode, resultCode, data);	      
+		//super.onActivityResult(requestCode, resultCode, data);	      
 	}
 	public String getImagePath(Uri uri){
 		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -147,7 +156,7 @@ public class MainActivity extends Activity {
 		cursor.moveToFirst();
 		String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
 		cursor.close();
-
+ 
 		return path;
 	}
 	public String getRealPathFromURI(Context context, Uri contentUri) {
