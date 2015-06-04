@@ -4,10 +4,41 @@
     android:layout_height="match_parent"
     tools:context="com.test.drawable.DrawActivity" >
 
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/button_pick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Pick Color" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="Pen Size:"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+            
+            <SeekBar
+                android:id="@+id/seekBar1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
     <com.test.drawable.DrawableView
         android:id="@+id/drawableView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayout1"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
 

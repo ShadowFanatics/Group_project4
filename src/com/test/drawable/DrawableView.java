@@ -21,6 +21,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+/**
+ * add
+ * <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+ * to AndroidManifest
+ */
+
 public class DrawableView extends View
 {
 	private Context context;
@@ -47,43 +53,55 @@ public class DrawableView extends View
 	
 	private void initialize()
 	{
+		//Undo history
+		historyBitmaps = new ArrayList<Bitmap>();
+		
+		//Paint
+		paint = new Paint();
+		paint.setAntiAlias(true);
+		paint.setStyle(Paint.Style.FILL);
+		paint.setColor(Color.WHITE);
+		penSize = 5;
+		
+		//TODO just for test  delete when use
+		pictureSetting(null);
+	}
+	
+	public void pictureSetting(String filePath)
+	{
 		//get screen size
 		DisplayMetrics metrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int screenWidth = metrics.widthPixels;
 //		int screenHeight = metrics.heightPixels;
 		
-		//read picture (R.drawable) TODO read from ?? directory
-		Bitmap pictureBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
-		int width = pictureBitmap.getWidth();
-	    int height = pictureBitmap.getHeight();
-//	    float scaleWidth = ((float) screenWidth) / width;
-//	    float scaleHeight = ((float) screenHeight) / height;
-	    float scale = ((float) screenWidth) / width;
-	    // CREATE A MATRIX FOR THE MANIPULATION
-	    Matrix matrix = new Matrix();
-	    // RESIZE THE BIT MAP
-//	    matrix.postScale(scaleWidth, scaleHeight);
-	    matrix.postScale(scale, scale);
-
-	    // "RECREATE" THE NEW BITMAP
-	    originalBitmap = Bitmap.createBitmap(pictureBitmap, 0, 0, width, height, matrix, false);
-	    
-//	    originalBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
+		//TODO read from filePath
+		Bitmap pictureBitmap = BitmapFactory.decodeFile(filePath);
 		
-		//Undo history
-		historyBitmaps = new ArrayList<Bitmap>();
-		//create an empty Bitmap with the same size of this View
-//		originalBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		if(pictureBitmap == null)
+		{
+			//create an empty Bitmap with the same size of this View
+			originalBitmap = Bitmap.createBitmap(screenWidth, screenWidth, Bitmap.Config.ARGB_8888);
+		}
+		else
+		{
+			int width = pictureBitmap.getWidth();
+		    int height = pictureBitmap.getHeight();
+//		    float scaleWidth = ((float) screenWidth) / width;
+//		    float scaleHeight = ((float) screenHeight) / height;
+		    float scale = ((float) screenWidth) / width;
+		    // CREATE A MATRIX FOR THE MANIPULATION
+		    Matrix matrix = new Matrix();
+		    // RESIZE THE BIT MAP
+//		    matrix.postScale(scaleWidth, scaleHeight);
+		    matrix.postScale(scale, scale);
+
+		    // "RECREATE" THE NEW BITMAP
+		    originalBitmap = Bitmap.createBitmap(pictureBitmap, 0, 0, width, height, matrix, false);
+		}
+
 		//currentBitmap used for drawing
 		currentBitmap = originalBitmap;
-		
-		paint = new Paint();
-		paint.setAntiAlias(true);
-		paint.setStyle(Paint.Style.FILL);
-		paint.setColor(Color.BLACK);
-		
-		penSize = 10;
 	}
 
 	@Override
@@ -160,6 +178,11 @@ public class DrawableView extends View
 	public void setPenColor(int color)
 	{
 		paint.setColor(color);
+	}
+	
+	public int getPenColor()
+	{
+		return paint.getColor();
 	}
 	
 	public void save()
