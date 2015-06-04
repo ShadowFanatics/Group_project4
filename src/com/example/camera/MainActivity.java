@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 			
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
-			startActivityForResult(intent, 0);      
+			startActivityForResult(intent, CAMERA);      
 	     }
 	};
 	private OnClickListener btnView = new OnClickListener(){
@@ -95,8 +95,8 @@ public class MainActivity extends Activity {
 			//開啟相簿相片集，須由startActivityForResult且帶入requestCode進行呼叫，原因
 			//為點選相片後返回程式呼叫onActivityResult
 			Intent intent = new Intent();
-			intent.setType("image/*");
 			intent.setAction(Intent.ACTION_GET_CONTENT);
+			intent.setType("image/*");
 			startActivityForResult(intent, PHOTO);
 		}
 	};
@@ -112,46 +112,35 @@ public class MainActivity extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
-		if (resultCode == RESULT_OK) {
-	    //	取出拍照後回傳資料
-			Bundle extras = data.getExtras();
-	    //	將資料轉換為圖像格式
-	        Bitmap bmp = (Bitmap) extras.get("data");
-	        //載入ImageView
-	        photo.setImageBitmap(bmp);
+		if ( resultCode != RESULT_OK) { //此處的 RESULT_OK 是系統自定義得一個常量
+			Log.e("Camera","ActivityResult resultCode error");
+			return;
 		}
-		//覆蓋原來的Activity
-		super.onActivityResult(requestCode, resultCode, data);
-		/*super.onActivityResult(requestCode, resultCode, data);
 		//藉由requestCode判斷是否為開啟相機或開啟相簿而呼叫的，且data不為null
-		if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null && data.getData() != null)
-		{
+		if ( requestCode == PHOTO && data != null) {
 			//取得照片路徑uri
 			Uri uri = data.getData();
-			ContentResolver cr = this.getContentResolver();	         
-			String path = getImagePath(uri);
-	                    
-			try{
-				//讀取照片，型態為Bitmap
-				Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-		         
-				//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放
-				if(bitmap.getWidth()>bitmap.getHeight()){
-					ScalePic(bitmap,mPhone.heightPixels, readImageDegree(path));
-		        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path)));
-		        }
-		        else{ 
-		        	ScalePic(bitmap,mPhone.widthPixels,readImageDegree(path));
-		        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path))+path);
-		        }
-		        //rotateBitmap(readImageDegree(uri.toString()),bitmap);
-		        //photo.setImageBitmap(bitmap);
-			} 
-			catch (FileNotFoundException e){
-				Log.w(tag, "OnActivityError");
-			}
-		}*/	                
+	        ContentResolver cr = this.getContentResolver();
+	        try {
+	        	//讀取照片，型態為Bitmap
+	        	Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+	        	//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放
+	        	photo.setImageBitmap(bitmap);
+	        } 
+	        catch (FileNotFoundException e) {
+	        }
+		}
+		if ( requestCode == CAMERA && data != null) {
+			//取出拍照後回傳資料
+		    Bundle extras = data.getExtras();
+		    //將資料轉換為圖像格式
+		    Bitmap bmp = (Bitmap) extras.get("data");
+	    	//載入ImageView
+		    photo.setImageBitmap(bmp);
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
+	
 	public String getImagePath(Uri uri){
 		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 		cursor.moveToFirst();
