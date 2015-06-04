@@ -56,6 +56,9 @@ public class DrawActivity extends Activity
 		case R.id.action_clean:
 			drawableView.clean();
         	return true;
+		case R.id.action_texture:
+			drawableView.texture();
+        	return true;
 		default:
 			break;
 		}

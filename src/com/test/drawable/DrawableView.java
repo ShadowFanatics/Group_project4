@@ -35,6 +35,7 @@ public class DrawableView extends View
 	private Bitmap currentBitmap = null;
 	private Paint paint = null;
 	private Canvas drawingCanvas;
+	private Bitmap bmp;
 	
 	private final int UNDO_LIMIT = 5;	//times for Undo history
 	private float penSize;
@@ -266,5 +267,31 @@ public class DrawableView extends View
 		currentBitmap = originalBitmap;
 		
 		invalidate();
+	}
+	
+public void texture() {
+		
+		new subView(this.context);
+		invalidate();
+	}
+	private class subView extends View implements OnTouchListener{
+		
+		public subView(Context context) {
+			super(context);
+			// TODO Auto-generated constructor stub
+			
+		    drawingCanvas = new Canvas(currentBitmap);
+			bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+			Paint paint = new Paint();
+			paint.setAlpha(50);
+			drawingCanvas.drawBitmap(bmp, 0, 0, paint);
+		}
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+		
 	}
 }
