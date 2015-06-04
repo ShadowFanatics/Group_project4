@@ -1,8 +1,10 @@
 package com.example.camera;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 
 import com.test.drawable.DrawActivity;
 
@@ -44,6 +46,7 @@ public class MainActivity extends Activity {
 	private Button button_shot;
 	private Button button_view;
 	private Button button_edit;
+	private Uri uri;
 	   
 	private final static int CAMERA = 66 ;
 	private final static int PHOTO = 99 ;
@@ -81,10 +84,16 @@ public class MainActivity extends Activity {
 			//開啟相機功能，並將拍照後的圖片存入SD卡相片集內，須由startActivityForResult且
 			//帶入 requestCode進行呼叫，原因為拍照完畢後返回程式後則呼叫onActivityResult
 			ContentValues value = new ContentValues();
-			value.put(MediaColumns.MIME_TYPE, "image/jpeg");                                      
-			Uri uri= getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
+			value.put(MediaColumns.MIME_TYPE, "image/jpeg");
+			
+			uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
 		                                              value);
-			//Toast.makeText(v.getContext(), uri.toString(), Toast.LENGTH_LONG).show();
+			Toast.makeText(v.getContext(), uri.toString(), Toast.LENGTH_LONG).show();
+			
+			
+			
+			
+			
 			
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
@@ -117,6 +126,7 @@ public class MainActivity extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
 		if ( resultCode != RESULT_OK) { //此處的 RESULT_OK 是系統自定義得一個常量
 			Log.e("Camera","ActivityResult resultCode error");
 			return;
@@ -136,17 +146,50 @@ public class MainActivity extends Activity {
 	        }
 		}
 		if ( requestCode == CAMERA && data != null) {
-			//Uri uri = data.getData();
+			
+			/*
+			if(data.getData()==null){
+			    bitmap = (Bitmap)data.getExtras().get("data");
+			}else{
+			    bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getData());
+			}*/
+			//Toast.makeText(MainActivity.this, uri.toString()+ "dasd", Toast.LENGTH_LONG).show();
+			
+			
 			//取出拍照後回傳資料
 		    Bundle extras = data.getExtras();
 		    //將資料轉換為圖像格式
 		    Bitmap bmp = (Bitmap) extras.get("data");
-		    //String path = getImagePath(uri);
+		    
+		    
+		    uri = getImageUri(MainActivity.this, bmp);
+		    Toast.makeText(MainActivity.this, uri.toString()+ "dasd", Toast.LENGTH_LONG).show();
+		    String path = getImagePath(uri);
+		    
 		    //ScalePic(bmp, mPhone.heightPixels,readImageDegree(path));
+		    /*
+		    ByteArrayOutputStream bs = new ByteArrayOutputStream();
+		    bmp.compress(Bitmap.CompressFormat.JPEG, 50, bs);
+		    Bundle bundle = new Bundle();
+		    bundle.putByteArray("image", bs.toByteArray());
+		    
+		    Intent intent = new Intent();
+		    intent.putExtras(bundle);
+		    
+		    intent.setClass(MainActivity.this, DrawActivity.class);
+		    startActivityForResult(intent, 0);
+		    */
 	    	//載入ImageView
 		    photo.setImageBitmap(bmp);
 		}
-		super.onActivityResult(requestCode, resultCode, data);
+		
+	}
+	
+	public static Uri getImageUri(Context inContext, Bitmap inImage) { 
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream(); 
+		inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes); 
+		String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null); 
+		return Uri.parse(path); 
 	}
 	
 	public String getImagePath(Uri uri){
@@ -206,9 +249,9 @@ public class MainActivity extends Activity {
 	private void ScalePic(Bitmap bitmap,int phone,int angle)
 	{
 		Matrix mMat = new Matrix() ;
-		/*if(!bitmap.isRecycled()){
+		if(!bitmap.isRecycled()){
 			bitmap.recycle();
-		}*/
+		}
 		   	   
 		//縮放比例預設為1
 		float mScale = 1 ;

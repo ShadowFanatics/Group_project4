@@ -3,6 +3,8 @@ package com.test.drawable;
 import com.example.camera.R;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +20,12 @@ public class DrawActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
         
+        //Bundle bundle = this.getIntent().getExtras();
+        //byte[] b = bundle.getByteArray("image");
+        //Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+        
         drawableView = (DrawableView) findViewById(R.id.drawableView);
+        
     }
 
     @Override
@@ -49,6 +56,7 @@ public class DrawActivity extends Activity
 		case R.id.action_clean:
 			drawableView.clean();
         	return true;
+        
 		default:
 			break;
 		}

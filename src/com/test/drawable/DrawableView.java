@@ -16,11 +16,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class DrawableView extends View
@@ -37,6 +39,10 @@ public class DrawableView extends View
 	private float touchX;
 	private float touchY;
 	private boolean isNew;
+	
+	private Button redButton;
+	private Button blueButton;
+	private Button greenButton;
 	
 	public DrawableView(Context context, AttributeSet attrs)
 	{
@@ -56,6 +62,9 @@ public class DrawableView extends View
 //		int screenHeight = metrics.heightPixels;
 		
 		//read picture (R.drawable) TODO read from ?? directory
+		
+		
+		
 		Bitmap pictureBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
 		int width = pictureBitmap.getWidth();
 	    int height = pictureBitmap.getHeight();
@@ -86,7 +95,36 @@ public class DrawableView extends View
 		paint.setColor(Color.BLACK);
 		
 		penSize = 10;
+		//iniViews();
+		
 	}
+	
+	private void iniViews(){
+		redButton = (Button)findViewById(R.id.button1);
+		blueButton = (Button)findViewById(R.id.button2);
+		greenButton = (Button)findViewById(R.id.button3);
+		
+		redButton.setOnClickListener(bClickListener);
+		blueButton.setOnClickListener(bClickListener);
+		greenButton.setOnClickListener(bClickListener);
+	}
+	
+	private Button.OnClickListener bClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			if(v.getId() == redButton.getId()){
+				paint.setColor(Color.RED);
+			}
+			else if (v.getId() == blueButton.getId()) {
+				paint.setColor(Color.BLUE);
+			}
+			else if(v.getId() == greenButton.getId()){
+				paint.setColor(Color.GREEN);
+			}
+		}
+	};
 
 	@Override
 	protected void onDraw(Canvas canvas)
