@@ -128,7 +128,7 @@ public class DrawableView extends View
 		paint.setStyle(Paint.Style.FILL);
 		paint.setColor(Color.BLACK);
 		
-		penSize = 10;
+		penSize = 5;
 	}
 
 	@Override
@@ -208,6 +208,11 @@ public class DrawableView extends View
 	public void setPenColor(int color)
 	{
 		paint.setColor(color);
+	}
+	
+	public int getPenColor()
+	{
+		return paint.getColor();
 	}
 	
 	public void save()

@@ -14,18 +14,17 @@ import android.view.MenuItem;
 public class DrawActivity extends Activity
 {
 	private DrawableView drawableView;
+	private SeekBar seekBar;
+	private Button pickButton;
+	private int seekBarProgress;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-        Bundle extras = getIntent().getExtras();
-        Uri uri = (Uri) extras.getParcelable("sendUri");
-        String path = (String) extras.getString("sendString");
-        Log.e("URI",uri.toString());
-        drawableView = (DrawableView) findViewById(R.id.drawableView);
-        drawableView.set(path, uri, this.getContentResolver());
+        
+        initialize();
     }
 
     @Override
@@ -65,5 +64,63 @@ public class DrawActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
     
+    private void initialize()
+    {
+    	Bundle extras = getIntent().getExtras();
+        Uri uri = (Uri) extras.getParcelable("sendUri");
+        String path = (String) extras.getString("sendString");
+        Log.e("URI",uri.toString());
+        drawableView = (DrawableView) findViewById(R.id.drawableView);
+        drawableView.set(path, uri, this.getContentResolver());
+        
+    	seekBarProgress = 5;
+    	seekBar = (SeekBar) findViewById(R.id.seekBar1);
+    	seekBar.setProgress(0);
+    	seekBar.setMax(45);
+    	seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+    	{
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar)
+			{
+				drawableView.setPenSize(seekBarProgress);
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar)
+			{
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser)
+			{
+				seekBarProgress = 5+progress;
+			}
+		});
+    	
+    	pickButton = (Button) findViewById(R.id.button_pick);
+    	pickButton.setOnClickListener(new Button.OnClickListener()
+    	{
+			@Override
+			public void onClick(View v)
+			{
+				showColorPickerDialog();
+			}
+    	});
+    }
     
+    private void showColorPickerDialog()
+    {
+    	HSVColorPickerDialog colorPickerDialog = new HSVColorPickerDialog( DrawActivity.this,
+    			drawableView.getPenColor(), new HSVColorPickerDialog.OnColorSelectedListener()
+    	{
+    	    @Override
+    	    public void colorSelected(Integer color)
+    	    {
+    	    	drawableView.setPenColor(color.intValue());
+    	    }
+    	});
+    	colorPickerDialog.setTitle( "Pick a color" );
+    	colorPickerDialog.show();
+    }
 }
