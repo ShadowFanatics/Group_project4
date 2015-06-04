@@ -62,7 +62,9 @@ public class DrawActivity extends Activity
     private void initialize()
     {
     	drawableView = (DrawableView) findViewById(R.id.drawableView);
-    	
+    	//TODO just for test  delete when use
+        drawableView.pictureSetting(null);
+        
     	seekBarProgress = 5;
     	seekBar = (SeekBar) findViewById(R.id.seekBar1);
     	seekBar.setProgress(0);

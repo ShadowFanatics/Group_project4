@@ -62,9 +62,6 @@ public class DrawableView extends View
 		paint.setStyle(Paint.Style.FILL);
 		paint.setColor(Color.WHITE);
 		penSize = 5;
-		
-		//TODO just for test  delete when use
-		pictureSetting(null);
 	}
 	
 	public void pictureSetting(String filePath)
