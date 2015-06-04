@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import com.example.camera.R;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,9 +17,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -32,12 +35,14 @@ public class DrawableView extends View
 	private Paint paint = null;
 	private Canvas drawingCanvas;
 	
-	private final int UNDO_LIMIT = 5;	//times for Undo history
+	private final int UNDO_LIMIT = 1;	//times for Undo history
 	private float penSize;
 	private float touchX;
 	private float touchY;
 	private boolean isNew;
 	
+	public Uri reciveUri;
+	public ContentResolver cr;
 	public DrawableView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
@@ -47,29 +52,34 @@ public class DrawableView extends View
 		initialize();
 	}
 	
-	private void initialize()
-	{
-		//get screen size
+	public void set(String path, Uri uri, ContentResolver cr) {
 		DisplayMetrics metrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		int screenWidth = metrics.widthPixels;
+		//float scale = ((float) screenWidth) / width;
+		//try {
+			BitmapFactory.Options options = new BitmapFactory.Options();    
+			options.inJustDecodeBounds = true;      
+			options.inSampleSize = 3;
+			options.inJustDecodeBounds = false;
+			Bitmap pictureBitmap = BitmapFactory.decodeFile(path,options);
+		    
+			originalBitmap = pictureBitmap;
+		    currentBitmap = originalBitmap;
+		/*} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		Log.e("set","set");
+	}
+	
+	private void initialize()
+	{
+		//get screen size
+		
 //		int screenHeight = metrics.heightPixels;
 		
 		//read picture (R.drawable) TODO read from ?? directory
-		Bitmap pictureBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
-		int width = pictureBitmap.getWidth();
-	    int height = pictureBitmap.getHeight();
-//	    float scaleWidth = ((float) screenWidth) / width;
-//	    float scaleHeight = ((float) screenHeight) / height;
-	    float scale = ((float) screenWidth) / width;
-	    // CREATE A MATRIX FOR THE MANIPULATION
-	    Matrix matrix = new Matrix();
-	    // RESIZE THE BIT MAP
-//	    matrix.postScale(scaleWidth, scaleHeight);
-	    matrix.postScale(scale, scale);
-
-	    // "RECREATE" THE NEW BITMAP
-	    originalBitmap = Bitmap.createBitmap(pictureBitmap, 0, 0, width, height, matrix, false);
 	    
 //	    originalBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
 		
@@ -78,7 +88,7 @@ public class DrawableView extends View
 		//create an empty Bitmap with the same size of this View
 //		originalBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		//currentBitmap used for drawing
-		currentBitmap = originalBitmap;
+
 		
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -92,8 +102,11 @@ public class DrawableView extends View
 	protected void onDraw(Canvas canvas)
 	{
 		super.onDraw(canvas);
+		Log.e("DRAW", "DRAW");
 		//draw to this View
-		canvas.drawBitmap(currentBitmap, 0, 0, null);
+		if ( currentBitmap != null ) {
+			canvas.drawBitmap(currentBitmap, 0, 0, null);
+		}
 	}
 	
 	@Override

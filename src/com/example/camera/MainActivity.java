@@ -44,11 +44,13 @@ public class MainActivity extends Activity {
 	private Button button_shot;
 	private Button button_view;
 	private Button button_edit;
-	   
+	private  Bundle extras;
 	private final static int CAMERA = 66 ;
 	private final static int PHOTO = 99 ;
 	private final static String tag = "camera" ;
 	        
+	private Uri sendUri;
+	private String sendString;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
@@ -109,7 +111,10 @@ public class MainActivity extends Activity {
 		{
 		    Intent intent = new Intent();
 		    intent.setClass(MainActivity.this, DrawActivity.class);
+		    
+		    intent.putExtras(extras);
 		    startActivity(intent);
+		    finish();
 		}
 	};
 	        
@@ -117,36 +122,35 @@ public class MainActivity extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
-		if ( resultCode != RESULT_OK) { //此處的 RESULT_OK 是系統自定義得一個常量
-			Log.e("Camera","ActivityResult resultCode error");
-			return;
-		}
 		//藉由requestCode判斷是否為開啟相機或開啟相簿而呼叫的，且data不為null
-		if ( requestCode == PHOTO && data != null) {
-			//取得照片路徑uri
-			Uri uri = data.getData();
-	        ContentResolver cr = this.getContentResolver();
-	        try {
-	        	//讀取照片，型態為Bitmap
-	        	Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
-	        	//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放
-	        	photo.setImageBitmap(bitmap);
-	        } 
-	        catch (FileNotFoundException e) {
-	        }
-		}
-		if ( requestCode == CAMERA && data != null) {
-			//Uri uri = data.getData();
-			//取出拍照後回傳資料
-		    Bundle extras = data.getExtras();
-		    //將資料轉換為圖像格式
-		    Bitmap bmp = (Bitmap) extras.get("data");
-		    //String path = getImagePath(uri);
-		    //ScalePic(bmp, mPhone.heightPixels,readImageDegree(path));
-	    	//載入ImageView
-		    photo.setImageBitmap(bmp);
-		}
-		super.onActivityResult(requestCode, resultCode, data);
+				if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null)
+				{
+					//取得照片路徑uri
+					Uri uri = data.getData();
+					ContentResolver cr = this.getContentResolver();	         
+					String path = getImagePath(uri);
+					sendUri = uri;    
+					sendString = path;
+					try{
+						//讀取照片，型態為Bitmap
+						Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+				         
+						//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放
+						if(bitmap.getWidth()>bitmap.getHeight()){
+							ScalePic(bitmap,mPhone.heightPixels, readImageDegree(path));
+				        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path)));
+				        }
+				        else{ 
+				        	ScalePic(bitmap,mPhone.widthPixels,readImageDegree(path));
+				        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path))+path);
+				        }
+				        //rotateBitmap(readImageDegree(uri.toString()),bitmap);
+				        //photo.setImageBitmap(bitmap);
+					} 
+					catch (FileNotFoundException e){
+					}
+				}	                
+				super.onActivityResult(requestCode, resultCode, data);	      
 	}
 	
 	public String getImagePath(Uri uri){
@@ -232,8 +236,11 @@ public class MainActivity extends Activity {
 
 			
 			photo.setImageBitmap(mScaleBitmap);
+			extras = new Bundle();
+		    extras.putParcelable("sendUri", sendUri);
+		    extras.putString("sendString", sendString);
 			Log.i("tag","resize");
-			bitmap.recycle();			   
+			bitmap.recycle();
 		}
 		else {
 	    	  

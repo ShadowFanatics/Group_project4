@@ -3,7 +3,10 @@ package com.test.drawable;
 import com.example.camera.R;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,8 +20,12 @@ public class DrawActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-        
+        Bundle extras = getIntent().getExtras();
+        Uri uri = (Uri) extras.getParcelable("sendUri");
+        String path = (String) extras.getString("sendString");
+        Log.e("URI",uri.toString());
         drawableView = (DrawableView) findViewById(R.id.drawableView);
+        drawableView.set(path, uri, this.getContentResolver());
     }
 
     @Override
