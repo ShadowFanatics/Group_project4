@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.test.drawable.DrawActivity;
+
 import android.app.ActionBar.LayoutParams;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -105,7 +107,9 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) 
 		{
-		       
+		    Intent intent = new Intent();
+		    intent.setClass(MainActivity.this, DrawActivity.class);
+		    startActivity(intent);
 		}
 	};
 	        
@@ -132,10 +136,13 @@ public class MainActivity extends Activity {
 	        }
 		}
 		if ( requestCode == CAMERA && data != null) {
+			//Uri uri = data.getData();
 			//取出拍照後回傳資料
 		    Bundle extras = data.getExtras();
 		    //將資料轉換為圖像格式
 		    Bitmap bmp = (Bitmap) extras.get("data");
+		    //String path = getImagePath(uri);
+		    //ScalePic(bmp, mPhone.heightPixels,readImageDegree(path));
 	    	//載入ImageView
 		    photo.setImageBitmap(bmp);
 		}
