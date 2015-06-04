@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
 
 
 public class DrawActivity extends Activity
@@ -66,12 +69,11 @@ public class DrawActivity extends Activity
     
     private void initialize()
     {
-    	Bundle extras = getIntent().getExtras();
-        Uri uri = (Uri) extras.getParcelable("sendUri");
+    	Bundle extras = getIntent().getExtras();        
         String path = (String) extras.getString("sendString");
-        Log.e("URI",uri.toString());
+        
         drawableView = (DrawableView) findViewById(R.id.drawableView);
-        drawableView.set(path, uri, this.getContentResolver());
+        drawableView.set(path, this.getContentResolver());
         
     	seekBarProgress = 5;
     	seekBar = (SeekBar) findViewById(R.id.seekBar1);

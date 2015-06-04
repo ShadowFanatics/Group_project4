@@ -54,33 +54,26 @@ public class DrawableView extends View
 		initialize();
 	}
 	
-	public void set(String path, Uri uri, ContentResolver cr) {
+	public void set(String path, ContentResolver cr) {
 		DisplayMetrics metrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		//int screenWidth = metrics.widthPixels;
-		//float scale = ((float) screenWidth) / width;
-		//try {
-			BitmapFactory.Options options = new BitmapFactory.Options();    
-			options.inJustDecodeBounds = true;     
-			options.inSampleSize = 3;
-			options.inJustDecodeBounds = false;
-			Bitmap pictureBitmap = BitmapFactory.decodeFile(path,options);
-			Matrix mMat = new Matrix() ;
-			mMat.setRotate(readImageDegree(path));
-			pictureBitmap = Bitmap.createBitmap(pictureBitmap,
+		
+		BitmapFactory.Options options = new BitmapFactory.Options();    
+		options.inJustDecodeBounds = true;     
+		options.inSampleSize = 3;//照片縮小倍率
+		options.inJustDecodeBounds = false;
+		Bitmap pictureBitmap = BitmapFactory.decodeFile(path,options);//用絕對路徑得到照片檔案
+		Matrix mMat = new Matrix() ;
+		mMat.setRotate(readImageDegree(path));//圖片旋轉
+		pictureBitmap = Bitmap.createBitmap(pictureBitmap,
                     0,
                     0,
                     pictureBitmap.getWidth(),
                     pictureBitmap.getHeight(),
                     mMat,
                     false);
-			originalBitmap = pictureBitmap;
-		    currentBitmap = originalBitmap;
-		/*} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		Log.e("set","set");
+		originalBitmap = pictureBitmap;
+		currentBitmap = originalBitmap;			
 	}
 	public static int readImageDegree(String path) {
 		int degree = 0;
@@ -110,16 +103,16 @@ public class DrawableView extends View
 	{
 		//get screen size
 		
-//		int screenHeight = metrics.heightPixels;
+		//int screenHeight = metrics.heightPixels;
 		
 		//read picture (R.drawable) TODO read from ?? directory
 	    
-//	    originalBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
+		//originalBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.test1);
 		
 		//Undo history
 		historyBitmaps = new ArrayList<Bitmap>();
 		//create an empty Bitmap with the same size of this View
-//		originalBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		//originalBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 		//currentBitmap used for drawing
 
 		

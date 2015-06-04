@@ -47,9 +47,8 @@ public class MainActivity extends Activity {
 	private  Bundle extras;
 	private final static int CAMERA = 66 ;
 	private final static int PHOTO = 99 ;
-	private final static String tag = "camera" ;
-	        
-	private Uri sendUri;
+	//private final static String tag = "camera" ;
+		
 	private String sendString;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -127,15 +126,15 @@ public class MainActivity extends Activity {
 				{
 					//取得照片路徑uri
 					Uri uri = data.getData();
-					ContentResolver cr = this.getContentResolver();	         
-					String path = getImagePath(uri);
-					sendUri = uri;    
+					ContentResolver cr = this.getContentResolver();	  
+					//取得絕對路徑
+					String path = getImagePath(uri);					 
 					sendString = path;
 					try{
 						//讀取照片，型態為Bitmap
 						Bitmap bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
 				         
-						//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放
+						//判斷照片為橫向或者為直向，並進入ScalePic判斷圖片是否要進行縮放，以及旋轉
 						if(bitmap.getWidth()>bitmap.getHeight()){
 							ScalePic(bitmap,mPhone.heightPixels, readImageDegree(path));
 				        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path)));
@@ -143,16 +142,14 @@ public class MainActivity extends Activity {
 				        else{ 
 				        	ScalePic(bitmap,mPhone.widthPixels,readImageDegree(path));
 				        	Log.i("tag","旋轉"+Integer.toString(readImageDegree(path))+path);
-				        }
-				        //rotateBitmap(readImageDegree(uri.toString()),bitmap);
-				        //photo.setImageBitmap(bitmap);
+				        }				       
 					} 
 					catch (FileNotFoundException e){
 					}
 				}	                
 				super.onActivityResult(requestCode, resultCode, data);	      
 	}
-	
+	//得到URI的絕對路徑
 	public String getImagePath(Uri uri){
 		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 		cursor.moveToFirst();
@@ -169,21 +166,8 @@ public class MainActivity extends Activity {
  
 		return path;
 	}
-	public String getRealPathFromURI(Context context, Uri contentUri) {
-		Cursor cursor = null;
-		try { 
-			String[] proj = { MediaStore.Images.Media.DATA };
-			cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			cursor.moveToFirst();
-			return cursor.getString(column_index);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
-		}
-	}
-	   
+	
+	//計算照片角度
 	public static int readImageDegree(String path) {
 		int degree = 0;
 		try {
@@ -234,19 +218,16 @@ public class MainActivity extends Activity {
 	                                                   mMat,
 	                                                   false);
 
-			
+			//傳送 absolutely path到drawactivity
 			photo.setImageBitmap(mScaleBitmap);
-			extras = new Bundle();
-		    extras.putParcelable("sendUri", sendUri);
+			extras = new Bundle();		    
 		    extras.putString("sendString", sendString);
-			Log.i("tag","resize");
+			//Log.i("tag","resize");
 			bitmap.recycle();
 		}
 		else {
 	    	  
 			Log.i("tag","not resize");
-
-			
 			photo.setImageBitmap(bitmap);
 			bitmap.recycle();
 	    	  
