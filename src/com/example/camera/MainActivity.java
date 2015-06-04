@@ -17,6 +17,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -81,7 +82,7 @@ public class MainActivity extends Activity {
 			value.put(MediaColumns.MIME_TYPE, "image/jpeg");                                      
 			Uri uri= getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,
 		                                              value);
-			Toast.makeText(v.getContext(), uri.toString(), Toast.LENGTH_LONG).show();;
+			//Toast.makeText(v.getContext(), uri.toString(), Toast.LENGTH_LONG).show();
 			
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
@@ -118,6 +119,7 @@ public class MainActivity extends Activity {
 		{
 			//取得照片路徑uri
 			Uri uri = data.getData();
+			Toast.makeText(MainActivity.this, uri.getPath().toString(), Toast.LENGTH_LONG).show();
 			ContentResolver cr = this.getContentResolver();	         
 			String path = getImagePath(uri);
 	                    
@@ -200,6 +202,9 @@ public class MainActivity extends Activity {
 	private void ScalePic(Bitmap bitmap,int phone,int angle)
 	{
 		Matrix mMat = new Matrix() ;
+		/*if(!bitmap.isRecycled()){
+			bitmap.recycle();
+		}*/
 		   	   
 		//縮放比例預設為1
 		float mScale = 1 ;
@@ -220,6 +225,8 @@ public class MainActivity extends Activity {
 	                                                   bitmap.getHeight(),
 	                                                   mMat,
 	                                                   false);
+
+			
 			photo.setImageBitmap(mScaleBitmap);
 			Log.i("tag","resize");
 			bitmap.recycle();			   
@@ -227,6 +234,8 @@ public class MainActivity extends Activity {
 		else {
 	    	  
 			Log.i("tag","not resize");
+
+			
 			photo.setImageBitmap(bitmap);
 			bitmap.recycle();
 	    	  
