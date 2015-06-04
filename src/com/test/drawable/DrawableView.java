@@ -17,6 +17,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.AttributeSet;
@@ -35,7 +36,7 @@ public class DrawableView extends View
 	private Paint paint = null;
 	private Canvas drawingCanvas;
 	
-	private final int UNDO_LIMIT = 1;	//times for Undo history
+	private final int UNDO_LIMIT = 5;	//times for Undo history
 	private float penSize;
 	private float touchX;
 	private float touchY;
@@ -55,15 +56,23 @@ public class DrawableView extends View
 	public void set(String path, Uri uri, ContentResolver cr) {
 		DisplayMetrics metrics = new DisplayMetrics();
 		((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		int screenWidth = metrics.widthPixels;
+		//int screenWidth = metrics.widthPixels;
 		//float scale = ((float) screenWidth) / width;
 		//try {
 			BitmapFactory.Options options = new BitmapFactory.Options();    
-			options.inJustDecodeBounds = true;      
+			options.inJustDecodeBounds = true;     
 			options.inSampleSize = 3;
 			options.inJustDecodeBounds = false;
 			Bitmap pictureBitmap = BitmapFactory.decodeFile(path,options);
-		    
+			Matrix mMat = new Matrix() ;
+			mMat.setRotate(readImageDegree(path));
+			pictureBitmap = Bitmap.createBitmap(pictureBitmap,
+                    0,
+                    0,
+                    pictureBitmap.getWidth(),
+                    pictureBitmap.getHeight(),
+                    mMat,
+                    false);
 			originalBitmap = pictureBitmap;
 		    currentBitmap = originalBitmap;
 		/*} catch (FileNotFoundException e) {
@@ -71,6 +80,29 @@ public class DrawableView extends View
 			e.printStackTrace();
 		}*/
 		Log.e("set","set");
+	}
+	public static int readImageDegree(String path) {
+		int degree = 0;
+		try {
+			ExifInterface exifInterface = new ExifInterface(path);
+	            
+			int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+			switch (orientation) {
+			case ExifInterface.ORIENTATION_ROTATE_90:
+				degree = 90;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_180:
+				degree = 180;
+				break;
+			case ExifInterface.ORIENTATION_ROTATE_270:
+				degree = 270;
+				break;
+			}
+		} catch (IOException ex) {
+			Log.d("讀取錯誤", "----" + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return degree;
 	}
 	
 	private void initialize()
