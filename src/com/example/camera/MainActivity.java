@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 			
 			Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 			intent.putExtra(MediaStore.EXTRA_OUTPUT, uri.getPath());  
-			startActivityForResult(intent, CAMERA);      
+			startActivityForResult(intent, 0);      
 	     }
 	};
 	private OnClickListener btnView = new OnClickListener(){
@@ -112,7 +112,17 @@ public class MainActivity extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode,Intent data)
 	{
+		if (resultCode == RESULT_OK) {
+	    //	取出拍照後回傳資料
+			Bundle extras = data.getExtras();
+	    //	將資料轉換為圖像格式
+	        Bitmap bmp = (Bitmap) extras.get("data");
+	        //載入ImageView
+	        photo.setImageBitmap(bmp);
+		}
+		//覆蓋原來的Activity
 		super.onActivityResult(requestCode, resultCode, data);
+		/*super.onActivityResult(requestCode, resultCode, data);
 		//藉由requestCode判斷是否為開啟相機或開啟相簿而呼叫的，且data不為null
 		if ((requestCode == CAMERA || requestCode == PHOTO ) && data != null && data.getData() != null)
 		{
@@ -140,8 +150,7 @@ public class MainActivity extends Activity {
 			catch (FileNotFoundException e){
 				Log.w(tag, "OnActivityError");
 			}
-		}	                
-		//super.onActivityResult(requestCode, resultCode, data);	      
+		}*/	                
 	}
 	public String getImagePath(Uri uri){
 		Cursor cursor = getContentResolver().query(uri, null, null, null, null);
